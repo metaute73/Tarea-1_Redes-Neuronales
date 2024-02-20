@@ -195,34 +195,36 @@ def run_game():
     rows = get_integer_value("Enter the number of rows (10-60): ", 10, 60)
     clear_console()
     cols = get_integer_value("Enter the number of cols (10-118): ", 10, 118)
+    # Get the name of the image that will be used to create the initial grid
     image = input("Enter the name of the image: ")
     # Get the number of generations that the Game of Life should run for
     generations = 5000
     resize_console(rows, cols)
 
-    # Create the initial random Game of Life grids
-    # get the image 
+    # Create the initial random Game of Life grids 
     image_path1 = 'script\el juego de la vida.png'
     image_path2 = 'script\heart p.png' 
+
     if image == "vida":
         image_path = image_path1
     else:
         image_path = image_path2
     image = cv2.imread(image_path)
+    #show the original image
     cv2.imshow('El juego de la vida', image)
-    cv2.waitKey(0) 
+    cv2.waitKey(0) # to avoid the console from crashing down
+    #convert the image to grayscale to delete the extra color channels
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-   
+    # resize the image to the desired dimensions
     new_size = (rows, cols) 
+    image = cv2.resize(image, new_size, interpolation=cv2.INTER_AREA) 
 
-    image = cv2.resize(image, new_size, interpolation=cv2.INTER_AREA)
-
-    #cv2.imshow('El juego de la vida reescalada', image)
-    #cv2.waitKey(0) 
-
+    # to turn the grayscale image into a binary image of zeros and ones we use the threshold function
+    # Any pixel value above 127 will be turned into 255 (white) and any pixel value below 127 will be turned into 0 (black)
     _, image_binary = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY)
+    
     image_array = image_binary // 255
-
+    image_array = -image_array + 1
     current_generation = image_array
     next_generation = create_initial_grid(rows, cols)
 
@@ -245,4 +247,3 @@ run = "r"
 while run == "r":
     out = run_game()
     run = out
-
